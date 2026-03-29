@@ -218,9 +218,6 @@ function updatePlaybackButtons(activeMode) {
 
 // 开始播放
 function startPlayback() {
-  const interva
-// 开始播放
-function startPlayback() {
   const interval = 3000; // 3秒切换一次卡片
   playbackInterval = setInterval(() => {
     if (playbackMode === "sequential") {
