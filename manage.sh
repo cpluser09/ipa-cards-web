@@ -3,11 +3,21 @@
 # 项目名称
 PROJECT_NAME="ipa-cards-web"
 
-# 检查命令是否可用
-check_command() {
-    if ! command -v "$1" &> /dev/null
+# 检查 Docker 是否可用
+check_docker() {
+    # 设置 Docker 命令路径
+    export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"
+    
+    if ! command -v "docker" &> /dev/null
     then
-        echo "错误：命令 '$1' 未找到，请先安装该命令"
+        echo "错误：Docker 命令未找到，请先安装 Docker"
+        return 1
+    fi
+    
+    # 检查 Docker 守护进程是否响应
+    if ! docker info &> /dev/null
+    then
+        echo "错误：Docker 守护进程未响应，请检查 Docker 应用程序是否正常运行"
         return 1
     fi
 }
@@ -17,7 +27,7 @@ start() {
     echo "正在启动$PROJECT_NAME服务..."
     
     # 检查 Docker 是否可用
-    if ! check_command "docker"
+    if ! check_docker
     then
         return 1
     fi
@@ -50,7 +60,7 @@ stop() {
     echo "正在停止$PROJECT_NAME服务..."
     
     # 检查 Docker 是否可用
-    if ! check_command "docker"
+    if ! check_docker
     then
         return 1
     fi
@@ -82,7 +92,7 @@ status() {
     echo "$PROJECT_NAME服务状态："
     
     # 检查 Docker 是否可用
-    if ! check_command "docker"
+    if ! check_docker
     then
         return 1
     fi
@@ -102,13 +112,50 @@ status() {
     $COMPOSE_CMD ps
 }
 
+# 更新服务（重新构建镜像并重启容器）
+update() {
+    echo "正在更新ipa-cards-web服务..."
+    
+    # 检查 Docker 是否可用
+    if ! check_docker
+    then
+        return 1
+    fi
+    
+    # 检查 Docker Compose 是否可用（支持两种语法）
+    if command -v "docker-compose" &> /dev/null
+    then
+        COMPOSE_CMD="docker-compose"
+    elif docker compose version &> /dev/null
+    then
+        COMPOSE_CMD="docker compose"
+    else
+        echo "错误：未找到 docker-compose 或 docker compose 命令"
+        return 1
+    fi
+    
+    # 停止当前服务
+    stop
+    
+    # 重新构建并启动服务
+    if $COMPOSE_CMD up -d --build
+    then
+        echo "$PROJECT_NAME服务已成功更新！"
+        echo "访问地址：http://localhost:8080"
+    else
+        echo "错误：更新$PROJECT_NAME服务失败"
+        return 1
+    fi
+}
+
 # 帮助信息
 help() {
     echo "使用说明："
-    echo "  ./manage.sh start    - 启动服务"
-    echo "  ./manage.sh stop     - 停止服务"
-    echo "  ./manage.sh status   - 查询服务状态"
-    echo "  ./manage.sh help     - 显示帮助信息"
+    echo "  $0 start    - 启动服务"
+    echo "  $0 stop     - 停止服务"
+    echo "  $0 status   - 查询服务状态"
+    echo "  $0 help     - 显示帮助信息"
+    echo "  $0 update   - 更新服务（重新构建镜像并重启容器）"
 }
 
 # 主函数
@@ -125,6 +172,9 @@ main() {
             ;;
         help)
             help
+            ;;
+        update)
+            update
             ;;
         *)
             help

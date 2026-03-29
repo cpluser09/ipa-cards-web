@@ -112,7 +112,6 @@ function renderIndexButtons() {
     btn.className = 'index-btn';
     btn.textContent = index + 1;
     btn.addEventListener('click', () => {
-      manualCardChange();
       goToIndex(index);
     });
     indexSection.appendChild(btn);
@@ -165,37 +164,73 @@ function bindEvents() {
   }
 }
 
-// 上一张卡片
+// 上一张卡片（根据当前播放模式切换）
 function prevCard() {
-  // 如果在播放状态下，直接切换卡片而不停止播放
-  if (window.currentIndex > 0) {
-    window.currentIndex--;
-    renderCard(window.currentIndex);
+  // 暂停自动播放
+  pausePlayback();
+  
+  // 根据当前播放模式切换卡片
+  if (window.playbackMode === "random") {
+    // 随机切换
+    let randomIndex;
+    do {
+      randomIndex = Math.floor(Math.random() * allCards.length);
+    } while (randomIndex === window.currentIndex); // 避免重复
+    window.currentIndex = randomIndex;
+  } else if (window.playbackMode === "sequential") {
+    // 顺序播放模式下的上一张（不循环）
+    if (window.currentIndex > 0) {
+      window.currentIndex--;
+    }
+    // 如果已经是第一张，不做任何操作
+  } else {
+    // 默认暂停模式下的上一张（不循环）
+    if (window.currentIndex > 0) {
+      window.currentIndex--;
+    }
+    // 如果已经是第一张，不做任何操作
   }
+  
+  renderCard(window.currentIndex);
 }
 
-// 下一张卡片
+// 下一张卡片（根据当前播放模式切换）
 function nextCard() {
-  // 如果在播放状态下，直接切换卡片而不停止播放
-  if (window.currentIndex < allCards.length - 1) {
-    window.currentIndex++;
-    renderCard(window.currentIndex);
+  // 暂停自动播放
+  pausePlayback();
+  
+  // 根据当前播放模式切换卡片
+  if (window.playbackMode === "random") {
+    // 随机切换
+    let randomIndex;
+    do {
+      randomIndex = Math.floor(Math.random() * allCards.length);
+    } while (randomIndex === window.currentIndex); // 避免重复
+    window.currentIndex = randomIndex;
+  } else if (window.playbackMode === "sequential") {
+    // 顺序播放模式下的下一张（循环）
+    if (window.currentIndex < allCards.length - 1) {
+      window.currentIndex++;
+    } else {
+      window.currentIndex = 0; // 循环到第一张
+    }
+  } else {
+    // 默认暂停模式下的下一张（不循环）
+    if (window.currentIndex < allCards.length - 1) {
+      window.currentIndex++;
+    }
+    // 如果已经是最后一张，不做任何操作
   }
+  
+  renderCard(window.currentIndex);
 }
 
 // 跳转到指定索引
 function goToIndex(index) {
-  // 如果在播放状态下，直接切换卡片而不停止播放
+  // 暂停自动播放
+  pausePlayback();
   window.currentIndex = index;
   renderCard(window.currentIndex);
-}
-
-// 手动切换卡片（暂停播放）
-function manualCardChange() {
-  // 确保在暂停状态下不会自动播放
-  if (window.playbackMode !== "paused") {
-    pausePlayback();
-  }
 }
 
 // 设置播放模式
@@ -237,11 +272,11 @@ function startPlayback() {
     if (window.playbackMode === "sequential") {
       // 顺序播放
       if (window.currentIndex < allCards.length - 1) {
-        nextCard();
+        window.currentIndex++;
       } else {
-        window.currentIndex = 0;
-        renderCard(window.currentIndex);
+        window.currentIndex = 0; // 循环到第一张
       }
+      renderCard(window.currentIndex);
     } else if (window.playbackMode === "random") {
       // 随机播放
       let randomIndex;
@@ -254,13 +289,12 @@ function startPlayback() {
   }, interval);
 }
 
-// 暂停播放
+// 暂停播放（只暂停自动播放，不改变播放模式）
 function pausePlayback() {
   if (window.playbackInterval) {
     clearInterval(window.playbackInterval);
     window.playbackInterval = null;
   }
-  window.playbackMode = "paused";
   updatePlaybackButtons("paused");
 }
 

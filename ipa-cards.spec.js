@@ -29,7 +29,9 @@ test('Basic functionality test', async ({ page }) => {
   const indexButtons = page.locator('.index-btn');
   await expect(indexButtons).toHaveCount(48); // 20个元音 + 28个辅音 = 48个卡片
   
-  // 测试下一张卡片功能
+  // 测试下一张卡片功能（使用顺序播放模式）
+  await seqBtn.click();
+  await page.waitForTimeout(1000); // 等待播放模式切换
   const initialSymbol = await phoneticSymbol.textContent();
   await nextBtn.click();
   await page.waitForTimeout(500);
@@ -39,7 +41,7 @@ test('Basic functionality test', async ({ page }) => {
   // 测试索引按钮
   await indexButtons.nth(0).click();
   await page.waitForTimeout(500);
-  expect(await phoneticSymbol.textContent()).toEqual(initialSymbol);
+  expect(await phoneticSymbol.textContent()).toEqual("/i:/");
 });
 
 test('Playback functionality test', async ({ page }) => {
@@ -50,10 +52,18 @@ test('Playback functionality test', async ({ page }) => {
   const phoneticSymbol = page.locator('#phoneticSymbol');
   await expect(phoneticSymbol).toBeVisible();
   
-  // 启动顺序播放
+  // 检查初始播放模式
+  const initialMode = await page.evaluate(() => window.playbackMode);
+  expect(initialMode).toEqual('paused');
+  
+  // 测试顺序播放
   const seqBtn = page.locator('#seqBtn');
   await seqBtn.click();
   await page.waitForTimeout(4000); // 等待播放切换
+  
+  // 检查播放模式和卡片是否变化
+  const sequentialMode = await page.evaluate(() => window.playbackMode);
+  expect(sequentialMode).toEqual('sequential');
   
   // 检查卡片是否发生变化
   const initialSymbol = await phoneticSymbol.textContent();
@@ -65,10 +75,35 @@ test('Playback functionality test', async ({ page }) => {
   const pauseBtn = page.locator('#pauseBtn');
   await pauseBtn.click();
   
-  // 启动随机播放
+  // 测试暂停后的播放模式
+  const pausedMode = await page.evaluate(() => window.playbackMode);
+  expect(pausedMode).toEqual('sequential'); // 保持原模式
+  
+  // 测试暂停后按上一张/下一张是否按照顺序模式切换
+  const prevBtn = page.locator('#prevBtn');
+  await prevBtn.click();
+  await page.waitForTimeout(500);
+  const prevSymbol = await phoneticSymbol.textContent();
+  
+  // 再次点击下一张
+  const nextBtn = page.locator('#nextBtn');
+  await nextBtn.click();
+  await page.waitForTimeout(500);
+  const nextSymbol = await phoneticSymbol.textContent();
+  expect(nextSymbol).not.toEqual(prevSymbol); // 应该返回下一张卡片
+  
+  // 测试随机播放
   const randBtn = page.locator('#randBtn');
   await randBtn.click();
+  await page.waitForTimeout(4000);
+  
+  // 检查播放模式
+  const randomMode = await page.evaluate(() => window.playbackMode);
+  expect(randomMode).toEqual('random');
+  
+  // 检查卡片是否发生变化
+  const currentSymbol = await phoneticSymbol.textContent();
   await page.waitForTimeout(3500);
   const randomSymbol = await phoneticSymbol.textContent();
-  expect(randomSymbol).not.toEqual(newSymbol);
+  expect(randomSymbol).not.toEqual(currentSymbol);
 });
