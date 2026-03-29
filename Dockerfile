@@ -1,4 +1,4 @@
-# 使用官方Nginx镜像作为基础镜像
+# 使用Docker Hub的Nginx镜像
 FROM nginx:alpine
 
 # 将本地文件复制到Nginx的默认静态文件目录

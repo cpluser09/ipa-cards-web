@@ -57,10 +57,10 @@ const ipaData = {
 // 将元音和辅音合并成一个数组
 const allCards = [...ipaData.vowels, ...ipaData.consonants];
 
-// 状态变量
-let currentIndex = 0;
-let playbackMode = 'sequential'; // 'sequential', 'random', 'paused'
-let playbackInterval = null;
+// 状态变量（全局作用域，以便调试和测试）
+window.currentIndex = 0;
+window.playbackMode = 'paused'; // 'sequential', 'random', 'paused'
+window.playbackInterval = null;
 
 // DOM元素
 const phoneticSymbol = document.getElementById('phoneticSymbol');
@@ -78,7 +78,7 @@ const indexSection = document.getElementById('indexSection');
 // 初始化页面
 function initPage() {
   // 渲染当前卡片
-  renderCard(currentIndex);
+  renderCard(window.currentIndex);
 
   // 渲染索引按钮
   renderIndexButtons();
@@ -164,24 +164,39 @@ function bindEvents() {
 
 // 上一张卡片
 function prevCard() {
-  if (currentIndex > 0) {
-    currentIndex--;
-    renderCard(currentIndex);
+  // 确保在暂停状态下不会自动播放
+  if (window.playbackMode !== "paused") {
+    pausePlayback();
+  }
+  
+  if (window.currentIndex > 0) {
+    window.currentIndex--;
+    renderCard(window.currentIndex);
   }
 }
 
 // 下一张卡片
 function nextCard() {
-  if (currentIndex < allCards.length - 1) {
-    currentIndex++;
-    renderCard(currentIndex);
+  // 确保在暂停状态下不会自动播放
+  if (window.playbackMode !== "paused") {
+    pausePlayback();
+  }
+  
+  if (window.currentIndex < allCards.length - 1) {
+    window.currentIndex++;
+    renderCard(window.currentIndex);
   }
 }
 
 // 跳转到指定索引
 function goToIndex(index) {
-  currentIndex = index;
-  renderCard(currentIndex);
+  // 确保在暂停状态下不会自动播放
+  if (window.playbackMode !== "paused") {
+    pausePlayback();
+  }
+  
+  window.currentIndex = index;
+  renderCard(window.currentIndex);
 }
 
 // 设置播放模式
@@ -190,7 +205,7 @@ function setPlaybackMode(mode) {
   pausePlayback();
 
   // 设置新的播放模式
-  playbackMode = mode;
+  window.playbackMode = mode;
 
   // 更新按钮的激活状态
   updatePlaybackButtons(mode);
@@ -219,34 +234,34 @@ function updatePlaybackButtons(activeMode) {
 // 开始播放
 function startPlayback() {
   const interval = 3000; // 3秒切换一次卡片
-  playbackInterval = setInterval(() => {
-    if (playbackMode === "sequential") {
+  window.playbackInterval = setInterval(() => {
+    if (window.playbackMode === "sequential") {
       // 顺序播放
-      if (currentIndex < allCards.length - 1) {
+      if (window.currentIndex < allCards.length - 1) {
         nextCard();
       } else {
-        currentIndex = 0;
-        renderCard(currentIndex);
+        window.currentIndex = 0;
+        renderCard(window.currentIndex);
       }
-    } else if (playbackMode === "random") {
+    } else if (window.playbackMode === "random") {
       // 随机播放
       let randomIndex;
       do {
         randomIndex = Math.floor(Math.random() * allCards.length);
-      } while (randomIndex === currentIndex); // 避免重复
-      currentIndex = randomIndex;
-      renderCard(currentIndex);
+      } while (randomIndex === window.currentIndex); // 避免重复
+      window.currentIndex = randomIndex;
+      renderCard(window.currentIndex);
     }
   }, interval);
 }
 
 // 暂停播放
 function pausePlayback() {
-  if (playbackInterval) {
-    clearInterval(playbackInterval);
-    playbackInterval = null;
+  if (window.playbackInterval) {
+    clearInterval(window.playbackInterval);
+    window.playbackInterval = null;
   }
-  playbackMode = "paused";
+  window.playbackMode = "paused";
   updatePlaybackButtons("paused");
 }
 
