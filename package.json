@@ -1,7 +1,7 @@
 {
   "name": "ipa-cards-web",
   "version": "1.0.0",
-  "description": "",
+  "description": "国际音标学习卡片 - 一个交互式的 IPA（国际音标）学习工具。",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

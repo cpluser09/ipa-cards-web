@@ -111,7 +111,10 @@ function renderIndexButtons() {
     const btn = document.createElement('button');
     btn.className = 'index-btn';
     btn.textContent = index + 1;
-    btn.addEventListener('click', () => goToIndex(index));
+    btn.addEventListener('click', () => {
+      manualCardChange();
+      goToIndex(index);
+    });
     indexSection.appendChild(btn);
   });
 }
@@ -164,11 +167,7 @@ function bindEvents() {
 
 // 上一张卡片
 function prevCard() {
-  // 确保在暂停状态下不会自动播放
-  if (window.playbackMode !== "paused") {
-    pausePlayback();
-  }
-  
+  // 如果在播放状态下，直接切换卡片而不停止播放
   if (window.currentIndex > 0) {
     window.currentIndex--;
     renderCard(window.currentIndex);
@@ -177,11 +176,7 @@ function prevCard() {
 
 // 下一张卡片
 function nextCard() {
-  // 确保在暂停状态下不会自动播放
-  if (window.playbackMode !== "paused") {
-    pausePlayback();
-  }
-  
+  // 如果在播放状态下，直接切换卡片而不停止播放
   if (window.currentIndex < allCards.length - 1) {
     window.currentIndex++;
     renderCard(window.currentIndex);
@@ -190,13 +185,17 @@ function nextCard() {
 
 // 跳转到指定索引
 function goToIndex(index) {
+  // 如果在播放状态下，直接切换卡片而不停止播放
+  window.currentIndex = index;
+  renderCard(window.currentIndex);
+}
+
+// 手动切换卡片（暂停播放）
+function manualCardChange() {
   // 确保在暂停状态下不会自动播放
   if (window.playbackMode !== "paused") {
     pausePlayback();
   }
-  
-  window.currentIndex = index;
-  renderCard(window.currentIndex);
 }
 
 // 设置播放模式

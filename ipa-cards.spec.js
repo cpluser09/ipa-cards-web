@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 test('Basic functionality test', async ({ page }) => {
   // 访问页面
-  await page.goto('http://localhost:8081');
+  await page.goto('http://localhost:8080');
   
   // 检查页面标题
   await expect(page).toHaveTitle('国际音标学习卡片');
@@ -44,7 +44,7 @@ test('Basic functionality test', async ({ page }) => {
 
 test('Playback functionality test', async ({ page }) => {
   // 访问页面
-  await page.goto('http://localhost:8081');
+  await page.goto('http://localhost:8080');
   
   // 检查页面加载
   const phoneticSymbol = page.locator('#phoneticSymbol');
