@@ -24,7 +24,7 @@
         .container {
             max-width: 1024px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 10px; /* 减少内边距 */
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -34,10 +34,10 @@
 
         .card {
             width: 85%;
-            min-width: 650px; /* 增大卡片宽度，防止高度变化 */
-            max-width: 700px;
-            margin: 20px auto;
-            padding: 40px;
+            min-width: 750px; /* 进一步增大卡片宽度，防止高度变化 */
+            max-width: 800px;
+            margin: 10px auto; /* 减少margin */
+            padding: 30px; /* 减少内边距 */
             background: #ffffff;
             border-radius: 16px;
             position: relative;
@@ -185,19 +185,19 @@
         .index-section {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
-            gap: 8px;
+            gap: 6px; /* 减少间距 */
             width: 90%;
             max-width: 1000px;
-            margin: 24px auto;
+            margin: 16px auto; /* 减少margin */
         }
 
         .index-btn {
             aspect-ratio: 1;
-            border-radius: 8px;
+            border-radius: 6px; /* 减小圆角 */
             background-color: #e5e5ea;
             color: #000000;
             border: none;
-            font-size: 14px;
+            font-size: 12px; /* 减小字体 */
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.3s, transform 0.2s;
