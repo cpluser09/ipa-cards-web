@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  ipa-cards-web:
+    build: .
+    container_name: ipa-cards-web
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    networks:
+      - ipa-cards-net
+
+networks:
+  ipa-cards-net:
+    driver: bridge
