@@ -1,0 +1,7 @@
+node_modules/
+playwright-report/
+test-results/
+test-ipa-cards-full.js
+test-ipa-cards.js
+.DS_Store
+*.zip
