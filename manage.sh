@@ -123,8 +123,12 @@ main() {
         status)
             status
             ;;
-        help|*)
+        help)
             help
+            ;;
+        *)
+            help
+            return 1
             ;;
     esac
 }
