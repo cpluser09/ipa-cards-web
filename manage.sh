@@ -5,12 +5,12 @@ PROJECT_NAME="ipa-cards-web"
 
 # 检查 Docker 是否可用
 check_docker() {
-    # 设置 Docker 命令路径
-    export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"
-    
     if ! command -v "docker" &> /dev/null
     then
         echo "错误：Docker 命令未找到，请先安装 Docker"
+        echo "提示：Docker 命令路径需要添加到系统 PATH 中，例如："
+        echo "export PATH=\"/Applications/Docker.app/Contents/Resources/bin:$PATH\""
+        echo "可以将此命令添加到 ~/.zshrc 或 ~/.bashrc 文件中"
         return 1
     fi
     
