@@ -5,7 +5,7 @@ services:
     build: .
     container_name: ipa-cards-web
     ports:
-      - "8080:80"
+      - "8085:80"
     restart: unless-stopped
     networks:
       - ipa-cards-net

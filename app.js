@@ -261,7 +261,8 @@ function updatePlaybackButtons(activeMode) {
   } else if (activeMode === 'random') {
     randBtn.classList.add('active');
   } else if (activeMode === 'paused') {
-    pauseBtn.classList.add('active');
+    // 暂停状态下不激活任何按钮，或者激活暂停按钮，根据需求决定
+    // 这里选择不激活任何按钮，以表示播放已暂停
   }
 }
 

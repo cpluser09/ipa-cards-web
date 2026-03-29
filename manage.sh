@@ -48,7 +48,7 @@ start() {
     if $COMPOSE_CMD up -d
     then
         echo "$PROJECT_NAME服务已成功启动！"
-        echo "访问地址：http://localhost:8080"
+        echo "访问地址：http://localhost:8085"
     else
         echo "错误：启动$PROJECT_NAME服务失败"
         return 1
@@ -141,7 +141,7 @@ update() {
     if $COMPOSE_CMD up -d --build
     then
         echo "$PROJECT_NAME服务已成功更新！"
-        echo "访问地址：http://localhost:8080"
+        echo "访问地址：http://localhost:8085"
     else
         echo "错误：更新$PROJECT_NAME服务失败"
         return 1
