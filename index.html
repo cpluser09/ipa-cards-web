@@ -231,18 +231,31 @@
             box-shadow: 0 2px 10px rgba(46, 204, 113, 0.3);
         }
 
-        .index-row {
+        .index-label-row {
             display: flex;
-            align-items: center;
+            justify-content: center;
             width: 90%;
             max-width: 1000px;
-            margin: 4px auto;
+            margin: 4px auto 0;
+        }
+
+        .index-row {
+            width: 90%;
+            max-width: 1000px;
+            margin: 0 auto 4px;
+        }
+
+        .index-section-label {
+            font-size: 13px;
+            color: #6c757d;
+            margin-right: 10px;
+            font-weight: 600;
         }
 
         .index-section {
             display: grid;
             gap: 3px;
-            flex: 1;
+            margin: 0 auto;
         }
 
         #indexSectionVowels {
@@ -418,12 +431,16 @@
                 <button class="control-btn" id="nextBtn" onclick="nextCard();">&#8250;</button>
             </div>
         </div>
-        <div class="index-row">
-            <div class="index-section-label">元音</div>
-            <div class="index-section" id="indexSectionVowels"></div>
+        <div class="index-label-row">
+            <span class="index-section-label">元音</span>
         </div>
         <div class="index-row">
-            <div class="index-section-label">辅音</div>
+            <div class="index-section" id="indexSectionVowels"></div>
+        </div>
+        <div class="index-label-row">
+            <span class="index-section-label">辅音</span>
+        </div>
+        <div class="index-row">
             <div class="index-section" id="indexSectionConsonants"></div>
         </div>
     </div>
