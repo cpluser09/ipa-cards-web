@@ -231,13 +231,36 @@
             box-shadow: 0 2px 10px rgba(46, 204, 113, 0.3);
         }
 
-        .index-section {
-            display: grid;
-            grid-template-columns: repeat(16, 1fr); /* 16列，需要3行 */
-            gap: 3px; /* 进一步减少间距 */
+        .index-row {
+            display: flex;
+            align-items: center;
             width: 90%;
             max-width: 1000px;
-            margin: 8px auto;
+            margin: 4px auto;
+        }
+
+        .index-section {
+            display: grid;
+            gap: 3px;
+            flex: 1;
+        }
+
+        #indexSectionVowels {
+            grid-template-columns: repeat(14, 1fr);
+        }
+
+        #indexSectionConsonants {
+            grid-template-columns: repeat(14, 1fr);
+        }
+
+        .index-section-label {
+            width: 40px;
+            text-align: right;
+            font-size: 13px;
+            color: #6c757d;
+            margin-right: 10px;
+            font-weight: 600;
+            flex-shrink: 0;
         }
 
         .index-btn {
@@ -395,7 +418,14 @@
                 <button class="control-btn" id="nextBtn" onclick="nextCard();">&#8250;</button>
             </div>
         </div>
-        <div class="index-section" id="indexSection"></div>
+        <div class="index-row">
+            <div class="index-section-label">元音</div>
+            <div class="index-section" id="indexSectionVowels"></div>
+        </div>
+        <div class="index-row">
+            <div class="index-section-label">辅音</div>
+            <div class="index-section" id="indexSectionConsonants"></div>
+        </div>
     </div>
     <div class="footer">
         国际音标学习卡片 - Created by cpluser09

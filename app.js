@@ -71,7 +71,8 @@ const randBtn = document.getElementById('randBtn');
 const favBtn = document.getElementById('favBtn');
 const pauseBtn = document.getElementById('pauseBtn');
 const favoriteBtn = document.getElementById('favoriteBtn');
-const indexSection = document.getElementById('indexSection');
+const indexSectionVowels = document.getElementById('indexSectionVowels');
+const indexSectionConsonants = document.getElementById('indexSectionConsonants');
 
 window.currentIndex = 0;
 window.playbackMode = 'paused'; // 'sequential', 'random', 'favorites', 'paused'
@@ -152,29 +153,46 @@ function renderCard(index) {
 
 // 渲染索引按钮
 function renderIndexButtons() {
-  indexSection.innerHTML = '';
-  allCards.forEach((_, index) => {
+  indexSectionVowels.innerHTML = '';
+  indexSectionConsonants.innerHTML = '';
+
+  // 渲染元音按钮
+  ipaData.vowels.forEach((_, index) => {
     const btn = document.createElement('button');
     btn.className = 'index-btn';
     btn.textContent = index + 1;
+    btn.dataset.globalIndex = index;
     btn.addEventListener('click', () => {
       goToIndex(index);
     });
-    indexSection.appendChild(btn);
+    indexSectionVowels.appendChild(btn);
   });
+
+  // 渲染辅音按钮
+  ipaData.consonants.forEach((_, index) => {
+    const btn = document.createElement('button');
+    btn.className = 'index-btn';
+    btn.textContent = ipaData.vowels.length + index + 1;
+    btn.dataset.globalIndex = ipaData.vowels.length + index;
+    btn.addEventListener('click', () => {
+      goToIndex(ipaData.vowels.length + index);
+    });
+    indexSectionConsonants.appendChild(btn);
+  });
+
   updateFavoriteButtons();
 }
 
 // 更新索引按钮的激活状态
 function updateIndexButtons(activeIndex) {
-  const buttons = indexSection.querySelectorAll('.index-btn');
-  buttons.forEach((btn, index) => {
-    if (index === activeIndex) {
+  const allButtons = [
+    ...indexSectionVowels.querySelectorAll('.index-btn'),
+    ...indexSectionConsonants.querySelectorAll('.index-btn')
+  ];
+  allButtons.forEach((btn) => {
+    const globalIndex = parseInt(btn.dataset.globalIndex);
+    if (globalIndex === activeIndex) {
       btn.classList.add('active');
-      // 如果是收藏播放模式，并且当前索引是收藏的卡片，保持激活状态
-      if (window.playbackMode === 'favorites' && window.favorites.includes(index)) {
-        btn.classList.add('active');
-      }
     } else {
       btn.classList.remove('active');
     }
@@ -183,9 +201,13 @@ function updateIndexButtons(activeIndex) {
 
 // 更新收藏按钮状态
 function updateFavoriteButtons() {
-  const buttons = indexSection.querySelectorAll('.index-btn');
-  buttons.forEach((btn, index) => {
-    if (window.favorites.includes(index)) {
+  const allButtons = [
+    ...indexSectionVowels.querySelectorAll('.index-btn'),
+    ...indexSectionConsonants.querySelectorAll('.index-btn')
+  ];
+  allButtons.forEach((btn) => {
+    const globalIndex = parseInt(btn.dataset.globalIndex);
+    if (window.favorites.includes(globalIndex)) {
       btn.classList.add('favorite');
     } else {
       btn.classList.remove('favorite');
@@ -195,9 +217,13 @@ function updateFavoriteButtons() {
 
 // 更新禁用按钮状态
 function updateDisabledButtons() {
-  const buttons = indexSection.querySelectorAll('.index-btn');
-  buttons.forEach((btn, index) => {
-    if (window.playbackMode === 'favorites' && !window.favorites.includes(index)) {
+  const allButtons = [
+    ...indexSectionVowels.querySelectorAll('.index-btn'),
+    ...indexSectionConsonants.querySelectorAll('.index-btn')
+  ];
+  allButtons.forEach((btn) => {
+    const globalIndex = parseInt(btn.dataset.globalIndex);
+    if (window.playbackMode === 'favorites' && !window.favorites.includes(globalIndex)) {
       btn.classList.add('disabled');
     } else {
       btn.classList.remove('disabled');
