@@ -59,8 +59,11 @@ const allCards = [...ipaData.vowels, ...ipaData.consonants];
 
 // 状态变量（全局作用域，以便调试和测试）
 window.currentIndex = 0;
-window.playbackMode = 'paused'; // 'sequential', 'random', 'paused'
+window.playbackMode = 'paused'; // 'sequential', 'random', 'favorites', 'paused'
 window.playbackInterval = null;
+
+// 收藏状态（本地存储）
+window.favorites = JSON.parse(localStorage.getItem('ipa_favorites')) || [];
 
 // DOM元素
 const phoneticSymbol = document.getElementById('phoneticSymbol');
@@ -72,7 +75,9 @@ const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const seqBtn = document.getElementById('seqBtn');
 const randBtn = document.getElementById('randBtn');
+const favBtn = document.getElementById('favBtn');
 const pauseBtn = document.getElementById('pauseBtn');
+const favoriteBtn = document.getElementById('favoriteBtn');
 const indexSection = document.getElementById('indexSection');
 
 // 初始化页面
@@ -94,7 +99,19 @@ function renderCard(index) {
   phoneticName.textContent = card.name;
   phoneticPinyin.textContent = card.pinyin;
   pronunciationRule.textContent = card.pronunciation;
-  exampleWords.textContent = `例词：${card.examples}`;
+  exampleWords.textContent = `例词：`;
+  const examples = card.examples.split(', ');
+  examples.forEach((word, i) => {
+    const strong = document.createElement('strong');
+    strong.textContent = word;
+    exampleWords.appendChild(strong);
+    if (i < examples.length - 1) {
+      exampleWords.appendChild(document.createTextNode(', '));
+    }
+  });
+
+  // 更新收藏按钮状态
+  updateFavoriteButton();
 
   // 更新索引按钮的激活状态
   updateIndexButtons(index);
@@ -128,6 +145,28 @@ function updateIndexButtons(activeIndex) {
       btn.classList.remove('active');
     }
   });
+}
+
+// 更新收藏按钮状态
+function updateFavoriteButton() {
+  if (window.favorites.includes(window.currentIndex)) {
+    favoriteBtn.classList.add('active');
+  } else {
+    favoriteBtn.classList.remove('active');
+  }
+}
+
+// 收藏/取消收藏卡片
+function toggleFavorite() {
+  if (window.favorites.includes(window.currentIndex)) {
+    // 取消收藏
+    window.favorites = window.favorites.filter(index => index !== window.currentIndex);
+  } else {
+    // 收藏
+    window.favorites.push(window.currentIndex);
+  }
+  localStorage.setItem('ipa_favorites', JSON.stringify(window.favorites));
+  updateFavoriteButton();
 }
 
 // 绑定事件
@@ -167,9 +206,7 @@ function bindEvents() {
 // 上一张卡片（根据当前播放模式切换）
 function prevCard() {
   // 暂停自动播放
-  pausePlayback();
-  
-  // 根据当前播放模式切换卡片
+  pausePlayback();  // 根据当前播放模式切换卡片
   if (window.playbackMode === "random") {
     // 随机切换
     let randomIndex;
@@ -177,6 +214,16 @@ function prevCard() {
       randomIndex = Math.floor(Math.random() * allCards.length);
     } while (randomIndex === window.currentIndex); // 避免重复
     window.currentIndex = randomIndex;
+  } else if (window.playbackMode === "favorites") {
+    // 收藏播放
+    if (window.favorites.length > 0) {
+      const currentFavIndex = window.favorites.indexOf(window.currentIndex);
+      if (currentFavIndex > 0) {
+        window.currentIndex = window.favorites[currentFavIndex - 1];
+      } else {
+        window.currentIndex = window.favorites[window.favorites.length - 1];
+      }
+    }
   } else if (window.playbackMode === "sequential") {
     // 顺序播放模式下的上一张（不循环）
     if (window.currentIndex > 0) {
@@ -207,6 +254,16 @@ function nextCard() {
       randomIndex = Math.floor(Math.random() * allCards.length);
     } while (randomIndex === window.currentIndex); // 避免重复
     window.currentIndex = randomIndex;
+  } else if (window.playbackMode === "favorites") {
+    // 收藏播放
+    if (window.favorites.length > 0) {
+      const currentFavIndex = window.favorites.indexOf(window.currentIndex);
+      if (currentFavIndex < window.favorites.length - 1) {
+        window.currentIndex = window.favorites[currentFavIndex + 1];
+      } else {
+        window.currentIndex = window.favorites[0];
+      }
+    }
   } else if (window.playbackMode === "sequential") {
     // 顺序播放模式下的下一张（循环）
     if (window.currentIndex < allCards.length - 1) {
@@ -246,6 +303,12 @@ function setPlaybackMode(mode) {
 
   // 开始播放
   if (mode !== 'paused') {
+    // 如果是收藏播放，检查是否有收藏的卡片
+    if (mode === 'favorites' && window.favorites.length === 0) {
+      alert('没有收藏的卡片');
+      window.playbackMode = 'paused';
+      return;
+    }
     startPlayback();
   }
 }
@@ -254,12 +317,15 @@ function setPlaybackMode(mode) {
 function updatePlaybackButtons(activeMode) {
   seqBtn.classList.remove('active');
   randBtn.classList.remove('active');
+  favBtn.classList.remove('active');
   pauseBtn.classList.remove('active');
 
   if (activeMode === 'sequential') {
     seqBtn.classList.add('active');
   } else if (activeMode === 'random') {
     randBtn.classList.add('active');
+  } else if (activeMode === 'favorites') {
+    favBtn.classList.add('active');
   } else if (activeMode === 'paused') {
     // 暂停状态下不激活任何按钮，或者激活暂停按钮，根据需求决定
     // 这里选择不激活任何按钮，以表示播放已暂停
@@ -286,6 +352,17 @@ function startPlayback() {
       } while (randomIndex === window.currentIndex); // 避免重复
       window.currentIndex = randomIndex;
       renderCard(window.currentIndex);
+    } else if (window.playbackMode === "favorites") {
+      // 收藏播放
+      if (window.favorites.length > 0) {
+        const currentFavIndex = window.favorites.indexOf(window.currentIndex);
+        if (currentFavIndex < window.favorites.length - 1) {
+          window.currentIndex = window.favorites[currentFavIndex + 1];
+        } else {
+          window.currentIndex = window.favorites[0];
+        }
+        renderCard(window.currentIndex);
+      }
     }
   }, interval);
 }

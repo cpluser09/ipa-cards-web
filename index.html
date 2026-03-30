@@ -46,13 +46,42 @@
             border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
+        .card-header {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
         .phonetic-symbol {
             font-size: 100px;
             font-weight: bold;
             text-align: center;
-            margin-bottom: 30px;
             color: #2c3e50; /* 深灰色文字，护眼 */
             letter-spacing: -1px;
+        }
+
+        .favorite-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .favorite-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .favorite-btn.active {
+            color: #ffd700; /* 金色，表示已收藏 */
         }
 
         .info-section {
@@ -105,10 +134,15 @@
             font-size: 15px;
         }
 
+        .examples strong {
+            color: #2c3e50; /* 突出显示单词 */
+            font-weight: 600;
+        }
+
         /* 合并控制按钮和播放按钮在同一排 */
         .combined-controls {
             display: flex;
-            justify-content: center;
+            justify-content: space-between; /* 让播放按钮和切换按钮在两侧 */
             align-items: center;
             gap: 20px;
             width: 85%;
@@ -306,7 +340,10 @@
 <body>
     <div class="container">
         <div class="card">
-            <div class="phonetic-symbol" id="phoneticSymbol">/i:/</div>
+            <div class="card-header">
+                <div class="phonetic-symbol" id="phoneticSymbol">/i:/</div>
+                <button class="favorite-btn" id="favoriteBtn" onclick="toggleFavorite();">⭐</button>
+            </div>
             <div class="info-section">
                 <div class="info-item">
                     <div class="info-label">音标名称</div>
@@ -320,18 +357,19 @@
             <div class="pronunciation-section">
                 <div class="pronunciation-title">发音规则</div>
                 <div id="pronunciationRule">舌尖靠近下齿，舌前部抬起，嘴唇向两旁张开成扁平形</div>
-                <div class="examples" id="exampleWords">例词：sheep, green, please</div>
+                <div class="examples" id="exampleWords">例词：<strong>sheep</strong>, <strong>green</strong>, <strong>please</strong></div>
             </div>
         </div>
         <div class="combined-controls">
-            <div class="controls">
-                <button class="control-btn" id="prevBtn" onclick="prevCard();">&#8249;</button>
-                <button class="control-btn" id="nextBtn" onclick="nextCard();">&#8250;</button>
-            </div>
             <div class="playback-controls">
                 <button class="playback-btn" id="seqBtn" onclick="setPlaybackMode('sequential')">顺序</button>
                 <button class="playback-btn" id="randBtn" onclick="setPlaybackMode('random')">随机</button>
+                <button class="playback-btn" id="favBtn" onclick="setPlaybackMode('favorites')">收藏</button>
                 <button class="playback-btn" id="pauseBtn" onclick="pausePlayback()">暂停</button>
+            </div>
+            <div class="controls">
+                <button class="control-btn" id="prevBtn" onclick="prevCard();">&#8249;</button>
+                <button class="control-btn" id="nextBtn" onclick="nextCard();">&#8250;</button>
             </div>
         </div>
         <div class="index-section" id="indexSection"></div>
