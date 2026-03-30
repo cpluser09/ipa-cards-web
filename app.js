@@ -356,8 +356,8 @@ function togglePlaybackMode() {
   } else if (window.playbackMode === "random") {
     window.playbackMode = "sequential";
   } else {
-    // 初始状态或暂停状态，默认切换到随机播放
-    window.playbackMode = "random";
+    // 初始状态或暂停状态，默认切换到顺序播放
+    window.playbackMode = "sequential";
   }
 
   // 更新按钮的激活状态
@@ -500,13 +500,16 @@ function togglePause() {
     // 已暂停，点击播放
     // 检查当前播放模式
     if (window.playbackMode === "paused") {
-      // 如果是初始状态，默认切换到顺序播放
-      togglePlaybackMode();
-    } else {
-      // 如果已选择播放模式，直接开始播放
-      startPlayback();
+      // 如果是初始状态，默认使用顺序播放（不改变播放模式按钮）
+      window.playbackMode = "sequential";
+      // 更新模式按钮文字
+      const playModeBtn = document.getElementById("playModeBtn");
+      playModeBtn.textContent = "顺序";
+      playModeBtn.classList.add("active");
     }
-    
+    // 开始播放（保持当前播放模式不变）
+    startPlayback();
+
     // 更新暂停按钮文字
     const pauseBtn = document.getElementById("pauseBtn");
     pauseBtn.textContent = "暂停";
