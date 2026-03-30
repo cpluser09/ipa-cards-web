@@ -212,17 +212,6 @@ function toggleFavorite() {
   updateFavoriteButton();
   updateFavoriteButtons();
 }
-// 更新收藏按钮状态
-function updateFavoriteButton() {
-  const favBtn = document.getElementById("favBtn");
-  const isFavorite = window.favorites.includes(window.currentIndex);
-  
-  if (isFavorite) {
-    favBtn.classList.add("active");
-  } else {
-    favBtn.classList.remove("active");
-  }
-}
 // 绑定事件
 function bindEvents() {
   // 键盘事件
@@ -264,9 +253,13 @@ function prevCard() {
   if (window.playbackMode === "random") {
     // 随机切换
     let randomIndex;
-    do {
-      randomIndex = Math.floor(Math.random() * allCards.length);
-    } while (randomIndex === window.currentIndex); // 避免重复
+    if (allCards.length === 1) {
+      randomIndex = 0;
+    } else {
+      do {
+        randomIndex = Math.floor(Math.random() * allCards.length);
+      } while (randomIndex === window.currentIndex); // 避免重复
+    }
     window.currentIndex = randomIndex;
   } else if (window.playbackMode === "favorites") {
     // 收藏播放
@@ -274,7 +267,10 @@ function prevCard() {
       const currentFavIndex = window.favorites.indexOf(window.currentIndex);
       if (currentFavIndex > 0) {
         window.currentIndex = window.favorites[currentFavIndex - 1];
+      } else if (currentFavIndex === 0) {
+        window.currentIndex = window.favorites[window.favorites.length - 1];
       } else {
+        // 当前卡片不在收藏列表中，跳到最后一张收藏
         window.currentIndex = window.favorites[window.favorites.length - 1];
       }
     }
@@ -299,22 +295,29 @@ function prevCard() {
 function nextCard() {
   // 暂停自动播放
   pausePlayback();
-  
+
   // 根据当前播放模式切换卡片
   if (window.playbackMode === "random") {
     // 随机切换
     let randomIndex;
-    do {
-      randomIndex = Math.floor(Math.random() * allCards.length);
-    } while (randomIndex === window.currentIndex); // 避免重复
+    if (allCards.length === 1) {
+      randomIndex = 0;
+    } else {
+      do {
+        randomIndex = Math.floor(Math.random() * allCards.length);
+      } while (randomIndex === window.currentIndex); // 避免重复
+    }
     window.currentIndex = randomIndex;
   } else if (window.playbackMode === "favorites") {
     // 收藏播放
     if (window.favorites.length > 0) {
       const currentFavIndex = window.favorites.indexOf(window.currentIndex);
-      if (currentFavIndex < window.favorites.length - 1) {
+      if (currentFavIndex >= 0 && currentFavIndex < window.favorites.length - 1) {
         window.currentIndex = window.favorites[currentFavIndex + 1];
+      } else if (currentFavIndex === window.favorites.length - 1) {
+        window.currentIndex = window.favorites[0];
       } else {
+        // 当前卡片不在收藏列表中，跳到第一张收藏
         window.currentIndex = window.favorites[0];
       }
     }
@@ -345,11 +348,8 @@ function goToIndex(index) {
 }
 
 // 设置播放模式
-// 切换播放模式
+// 切换播放模式（不影响播放/暂停状态）
 function togglePlaybackMode() {
-  // 停止之前的播放
-  pausePlayback();
-
   // 切换播放模式
   if (window.playbackMode === "sequential") {
     window.playbackMode = "random";
@@ -360,53 +360,56 @@ function togglePlaybackMode() {
     window.playbackMode = "sequential";
   }
 
-  // 更新按钮的激活状态
-  updatePlaybackButtons(window.playbackMode);
-
-  // 更新按钮文字
+  // 更新模式按钮文字
   const playModeBtn = document.getElementById("playModeBtn");
   playModeBtn.textContent = window.playbackMode === "sequential" ? "顺序" : "随机";
 
-  // 开始播放
-  startPlayback();
+  // 更新按钮激活状态
+  updatePlaybackButtons(window.playbackMode);
+
+  // 如果当前正在播放，用新的模式继续播放
+  if (window.playbackInterval) {
+    // 清除定时器（不改变按钮状态）
+    clearInterval(window.playbackInterval);
+    window.playbackInterval = null;
+    // 重新开始播放
+    startPlayback();
+  }
 }
 function setPlaybackMode(mode) {
   console.log('setPlaybackMode called');
-  
-  // 停止之前的播放
-  pausePlayback();
+
+  // 如果是收藏播放，检查是否有收藏的卡片
+  if (mode === 'favorites' && window.favorites.length === 0) {
+    alert('没有收藏的卡片');
+    return;
+  }
 
   // 设置新的播放模式
   window.playbackMode = mode;
 
-  // 更新按钮的激活状态
+  // 更新按钮激活状态
   updatePlaybackButtons(mode);
 
-  // 开始播放
-  if (mode !== 'paused') {
-    console.log('starting playback');
-    // 如果是收藏播放，检查是否有收藏的卡片
-    if (mode === 'favorites' && window.favorites.length === 0) {
-      alert('没有收藏的卡片');
-      window.playbackMode = 'paused';
-      return;
-    }
+  // 如果当前正在播放，用新的模式继续播放
+  if (window.playbackInterval) {
+    // 清除定时器（不改变按钮状态）
+    clearInterval(window.playbackInterval);
+    window.playbackInterval = null;
+    // 重新开始播放
     startPlayback();
   }
 }
 
 // 更新播放按钮的激活状态
 function updatePlaybackButtons(activeMode) {
-  const playModeBtn = document.getElementById('playModeBtn');
   favBtn.classList.remove('active');
-  pauseBtn.classList.remove('active');
+  // playModeBtn 和 pauseBtn 不添加 active 类，永远保持蓝色
 
   if (activeMode === 'favorites') {
     favBtn.classList.add('active');
-  } else if (activeMode === 'paused') {
-    // 暂停状态下不激活任何按钮，明确地移除 playModeBtn 的 active 类
-    playModeBtn.classList.remove('active');
   }
+  // 其他模式不需要特殊处理
 
   // 更新索引按钮的禁用状态
   updateDisabledButtons();
@@ -419,63 +422,46 @@ function startPlayback() {
     if (window.playbackMode === "sequential") {
       // 顺序播放
       let nextIndex;
-      
-      if (window.favorites.length > 0 && isPlaybackModeFavorites()) {
-        // 收藏播放模式下的顺序播放
-        const currentFavIndex = window.favorites.indexOf(window.currentIndex);
-        
-        if (currentFavIndex < window.favorites.length - 1) {
-          nextIndex = window.favorites[currentFavIndex + 1];
-        } else {
-          nextIndex = window.favorites[0];
-        }
+
+      // 普通顺序播放
+      if (window.currentIndex < allCards.length - 1) {
+        nextIndex = window.currentIndex + 1;
       } else {
-        // 普通顺序播放
-        if (window.currentIndex < allCards.length - 1) {
-          nextIndex = window.currentIndex + 1;
-        } else {
-          nextIndex = 0; // 循环到第一张
-        }
+        nextIndex = 0; // 循环到第一张
       }
-      
+
       window.currentIndex = nextIndex;
       renderCard(window.currentIndex);
     } else if (window.playbackMode === "random") {
       // 随机播放
       let randomIndex;
-      
-      if (window.favorites.length > 0 && isPlaybackModeFavorites()) {
-        // 收藏播放模式下的随机播放
-        do {
-          randomIndex = window.favorites[Math.floor(Math.random() * window.favorites.length)];
-        } while (randomIndex === window.currentIndex); // 避免重复
+
+      // 普通随机播放
+      if (allCards.length === 1) {
+        // 只有一张卡片，无法切换
+        randomIndex = 0;
       } else {
-        // 普通随机播放
         do {
           randomIndex = Math.floor(Math.random() * allCards.length);
         } while (randomIndex === window.currentIndex); // 避免重复
       }
-      
+
       window.currentIndex = randomIndex;
       renderCard(window.currentIndex);
     } else if (window.playbackMode === "favorites") {
-      // 收藏播放模式下的默认顺序播放
+      // 收藏播放模式下的顺序播放
       if (window.favorites.length > 0) {
         const currentFavIndex = window.favorites.indexOf(window.currentIndex);
-        if (currentFavIndex < window.favorites.length - 1) {
+        if (currentFavIndex >= 0 && currentFavIndex < window.favorites.length - 1) {
           window.currentIndex = window.favorites[currentFavIndex + 1];
         } else {
+          // 当前是最后一张收藏或不在收藏列表中，跳到第一张收藏
           window.currentIndex = window.favorites[0];
         }
         renderCard(window.currentIndex);
       }
     }
   }, interval);
-}
-
-// 检查是否是收藏播放模式
-function isPlaybackModeFavorites() {
-  return window.playbackMode === "favorites";
 }
 
 // 暂停播放（只暂停自动播放，不改变播放模式）
@@ -500,17 +486,18 @@ function togglePause() {
     // 已暂停，点击播放
     // 检查当前播放模式
     if (window.playbackMode === "paused") {
-      // 如果是初始状态，默认使用顺序播放（不改变播放模式按钮）
+      // 如果是初始状态，默认使用顺序播放
       window.playbackMode = "sequential";
       // 更新模式按钮文字
       const playModeBtn = document.getElementById("playModeBtn");
       playModeBtn.textContent = "顺序";
-      playModeBtn.classList.add("active");
     }
     // 开始播放（保持当前播放模式不变）
     startPlayback();
 
-    // 更新暂停按钮文字
+    // 更新按钮状态
+    updatePlaybackButtons(window.playbackMode);
+    // 更新暂停按钮文字（永远保持蓝色，只改文字）
     const pauseBtn = document.getElementById("pauseBtn");
     pauseBtn.textContent = "暂停";
   }
