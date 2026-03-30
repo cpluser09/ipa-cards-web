@@ -142,6 +142,10 @@ function updateIndexButtons(activeIndex) {
   buttons.forEach((btn, index) => {
     if (index === activeIndex) {
       btn.classList.add('active');
+      // 如果是收藏播放模式，并且当前索引是收藏的卡片，保持激活状态
+      if (window.playbackMode === 'favorites' && window.favorites.includes(index)) {
+        btn.classList.add('active');
+      }
     } else {
       btn.classList.remove('active');
     }
