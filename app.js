@@ -403,8 +403,8 @@ function updatePlaybackButtons(activeMode) {
   } else if (activeMode === 'favorites') {
     favBtn.classList.add('active');
   } else if (activeMode === 'paused') {
-    // 暂停状态下不激活任何按钮，或者激活暂停按钮，根据需求决定
-    // 这里选择不激活任何按钮，以表示播放已暂停
+    // 暂停状态下不激活任何按钮，明确地移除 playModeBtn 的 active 类
+    playModeBtn.classList.remove('active');
   }
 
   // 更新索引按钮的禁用状态
