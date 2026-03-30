@@ -157,10 +157,10 @@ function renderIndexButtons() {
   indexSectionConsonants.innerHTML = '';
 
   // 渲染元音按钮
-  ipaData.vowels.forEach((_, index) => {
+  ipaData.vowels.forEach((item, index) => {
     const btn = document.createElement('button');
     btn.className = 'index-btn';
-    btn.textContent = index + 1;
+    btn.textContent = item.symbol;
     btn.dataset.globalIndex = index;
     btn.addEventListener('click', () => {
       goToIndex(index);
@@ -169,10 +169,10 @@ function renderIndexButtons() {
   });
 
   // 渲染辅音按钮
-  ipaData.consonants.forEach((_, index) => {
+  ipaData.consonants.forEach((item, index) => {
     const btn = document.createElement('button');
     btn.className = 'index-btn';
-    btn.textContent = ipaData.vowels.length + index + 1;
+    btn.textContent = item.symbol;
     btn.dataset.globalIndex = ipaData.vowels.length + index;
     btn.addEventListener('click', () => {
       goToIndex(ipaData.vowels.length + index);
