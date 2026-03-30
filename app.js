@@ -374,12 +374,15 @@ function setPlaybackMode(mode) {
 function updatePlaybackButtons(activeMode) {
   seqBtn.classList.remove('active');
   randBtn.classList.remove('active');
+  favBtn.classList.remove('active');
   pauseBtn.classList.remove('active');
 
   if (activeMode === 'sequential') {
     seqBtn.classList.add('active');
   } else if (activeMode === 'random') {
     randBtn.classList.add('active');
+  } else if (activeMode === 'favorites') {
+    favBtn.classList.add('active');
   } else if (activeMode === 'paused') {
     // 暂停状态下不激活任何按钮，或者激活暂停按钮，根据需求决定
     // 这里选择不激活任何按钮，以表示播放已暂停
