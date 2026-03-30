@@ -212,7 +212,17 @@ function toggleFavorite() {
   updateFavoriteButton();
   updateFavoriteButtons();
 }
-
+// 更新收藏按钮状态
+function updateFavoriteButton() {
+  const favBtn = document.getElementById("favBtn");
+  const isFavorite = window.favorites.includes(window.currentIndex);
+  
+  if (isFavorite) {
+    favBtn.classList.add("active");
+  } else {
+    favBtn.classList.remove("active");
+  }
+}
 // 绑定事件
 function bindEvents() {
   // 键盘事件
@@ -364,15 +374,12 @@ function setPlaybackMode(mode) {
 function updatePlaybackButtons(activeMode) {
   seqBtn.classList.remove('active');
   randBtn.classList.remove('active');
-  favBtn.classList.remove('active');
   pauseBtn.classList.remove('active');
 
   if (activeMode === 'sequential') {
     seqBtn.classList.add('active');
   } else if (activeMode === 'random') {
     randBtn.classList.add('active');
-  } else if (activeMode === 'favorites') {
-    favBtn.classList.add('active');
   } else if (activeMode === 'paused') {
     // 暂停状态下不激活任何按钮，或者激活暂停按钮，根据需求决定
     // 这里选择不激活任何按钮，以表示播放已暂停
@@ -388,22 +395,48 @@ function startPlayback() {
   window.playbackInterval = setInterval(() => {
     if (window.playbackMode === "sequential") {
       // 顺序播放
-      if (window.currentIndex < allCards.length - 1) {
-        window.currentIndex++;
+      let nextIndex;
+      
+      if (window.favorites.length > 0) {
+        // 收藏播放模式下的顺序播放
+        const currentFavIndex = window.favorites.indexOf(window.currentIndex);
+        
+        if (currentFavIndex < window.favorites.length - 1) {
+          nextIndex = window.favorites[currentFavIndex + 1];
+        } else {
+          nextIndex = window.favorites[0];
+        }
       } else {
-        window.currentIndex = 0; // 循环到第一张
+        // 普通顺序播放
+        if (window.currentIndex < allCards.length - 1) {
+          nextIndex = window.currentIndex + 1;
+        } else {
+          nextIndex = 0; // 循环到第一张
+        }
       }
+      
+      window.currentIndex = nextIndex;
       renderCard(window.currentIndex);
     } else if (window.playbackMode === "random") {
       // 随机播放
       let randomIndex;
-      do {
-        randomIndex = Math.floor(Math.random() * allCards.length);
-      } while (randomIndex === window.currentIndex); // 避免重复
+      
+      if (window.favorites.length > 0) {
+        // 收藏播放模式下的随机播放
+        do {
+          randomIndex = window.favorites[Math.floor(Math.random() * window.favorites.length)];
+        } while (randomIndex === window.currentIndex); // 避免重复
+      } else {
+        // 普通随机播放
+        do {
+          randomIndex = Math.floor(Math.random() * allCards.length);
+        } while (randomIndex === window.currentIndex); // 避免重复
+      }
+      
       window.currentIndex = randomIndex;
       renderCard(window.currentIndex);
     } else if (window.playbackMode === "favorites") {
-      // 收藏播放
+      // 收藏播放模式下的默认顺序播放
       if (window.favorites.length > 0) {
         const currentFavIndex = window.favorites.indexOf(window.currentIndex);
         if (currentFavIndex < window.favorites.length - 1) {
