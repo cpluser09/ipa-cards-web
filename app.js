@@ -398,9 +398,7 @@ function updatePlaybackButtons(activeMode) {
   favBtn.classList.remove('active');
   pauseBtn.classList.remove('active');
 
-  if (activeMode === 'sequential' || activeMode === 'random') {
-    playModeBtn.classList.add('active');
-  } else if (activeMode === 'favorites') {
+  if (activeMode === 'favorites') {
     favBtn.classList.add('active');
   } else if (activeMode === 'paused') {
     // 暂停状态下不激活任何按钮，明确地移除 playModeBtn 的 active 类
