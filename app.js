@@ -133,6 +133,7 @@ function renderIndexButtons() {
     });
     indexSection.appendChild(btn);
   });
+  updateFavoriteButtons();
 }
 
 // 更新索引按钮的激活状态
@@ -143,6 +144,30 @@ function updateIndexButtons(activeIndex) {
       btn.classList.add('active');
     } else {
       btn.classList.remove('active');
+    }
+  });
+}
+
+// 更新收藏按钮状态
+function updateFavoriteButtons() {
+  const buttons = indexSection.querySelectorAll('.index-btn');
+  buttons.forEach((btn, index) => {
+    if (window.favorites.includes(index)) {
+      btn.classList.add('favorite');
+    } else {
+      btn.classList.remove('favorite');
+    }
+  });
+}
+
+// 更新禁用按钮状态
+function updateDisabledButtons() {
+  const buttons = indexSection.querySelectorAll('.index-btn');
+  buttons.forEach((btn, index) => {
+    if (window.playbackMode === 'favorites' && !window.favorites.includes(index)) {
+      btn.classList.add('disabled');
+    } else {
+      btn.classList.remove('disabled');
     }
   });
 }
@@ -167,6 +192,7 @@ function toggleFavorite() {
   }
   localStorage.setItem('ipa_favorites', JSON.stringify(window.favorites));
   updateFavoriteButton();
+  updateFavoriteButtons();
 }
 
 // 绑定事件
@@ -330,6 +356,9 @@ function updatePlaybackButtons(activeMode) {
     // 暂停状态下不激活任何按钮，或者激活暂停按钮，根据需求决定
     // 这里选择不激活任何按钮，以表示播放已暂停
   }
+
+  // 更新索引按钮的禁用状态
+  updateDisabledButtons();
 }
 
 // 开始播放
