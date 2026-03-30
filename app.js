@@ -99,7 +99,7 @@ function renderCard(index) {
   phoneticName.textContent = card.name;
   phoneticPinyin.textContent = card.pinyin;
   pronunciationRule.textContent = card.pronunciation;
-  exampleWords.textContent = `例词：`;
+  exampleWords.textContent = ``;
   const examples = card.examples.split(', ');
   examples.forEach((word, i) => {
     const strong = document.createElement('strong');
