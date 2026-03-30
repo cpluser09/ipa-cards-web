@@ -178,15 +178,29 @@ function updateDisabledButtons() {
 
 // 更新收藏按钮状态
 function updateFavoriteButton() {
-  if (window.favorites.includes(window.currentIndex)) {
+  console.log('updateFavoriteButton called');
+  console.log('typeof currentIndex:', typeof window.currentIndex);
+  console.log('currentIndex:', window.currentIndex);
+  console.log('typeof favorites:', typeof window.favorites);
+  console.log('favorites:', window.favorites);
+  
+  const isFavorite = window.favorites.includes(window.currentIndex);
+  console.log('isFavorite:', isFavorite);
+  
+  if (isFavorite) {
     favoriteBtn.classList.add('active');
+    console.log('Added active class');
   } else {
     favoriteBtn.classList.remove('active');
+    console.log('Removed active class');
   }
+  
+  console.log('favoriteBtn.classList:', favoriteBtn.classList);
 }
 
 // 收藏/取消收藏卡片
 function toggleFavorite() {
+  console.log('toggleFavorite called');
   if (window.favorites.includes(window.currentIndex)) {
     // 取消收藏
     window.favorites = window.favorites.filter(index => index !== window.currentIndex);
@@ -322,6 +336,8 @@ function goToIndex(index) {
 
 // 设置播放模式
 function setPlaybackMode(mode) {
+  console.log('setPlaybackMode called');
+  
   // 停止之前的播放
   pausePlayback();
 
@@ -333,6 +349,7 @@ function setPlaybackMode(mode) {
 
   // 开始播放
   if (mode !== 'paused') {
+    console.log('starting playback');
     // 如果是收藏播放，检查是否有收藏的卡片
     if (mode === 'favorites' && window.favorites.length === 0) {
       alert('没有收藏的卡片');

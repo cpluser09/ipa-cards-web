@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Favorite Button</title>
+    <style>
+        .favorite-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            color: #d3d3d3; /* 默认灰色，表示未收藏 */
+        }
+        .favorite-btn:hover {
+            transform: scale(1.1);
+        }
+        .favorite-btn.active {
+            color: #ffd700; /* 金色，表示已收藏 */
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Favorite Button</h1>
+    <button class="favorite-btn" id="favoriteBtn">⭐</button>
+    <p id="status">未收藏</p>
+    
+    <script>
+        const favoriteBtn = document.getElementById('favoriteBtn');
+        const status = document.getElementById('status');
+        
+        // 模拟 window.favorites 和 window.currentIndex
+        window.favorites = [0]; // 假设第 0 个卡片已收藏
+        window.currentIndex = 0;
+        
+        function updateFavoriteButton() {
+            if (window.favorites.includes(window.currentIndex)) {
+                favoriteBtn.classList.add('active');
+                status.textContent = '已收藏';
+            } else {
+                favoriteBtn.classList.remove('active');
+                status.textContent = '未收藏';
+            }
+        }
+        
+        updateFavoriteButton();
+        
+        // 测试不同索引的效果
+        function testIndex(index) {
+            window.currentIndex = index;
+            updateFavoriteButton();
+        }
+        
+        // 测试按钮
+        setTimeout(() => {
+            console.log('测试索引 1');
+            testIndex(1);
+        }, 2000);
+        
+        setTimeout(() => {
+            console.log('测试索引 0');
+            testIndex(0);
+        }, 4000);
+    </script>
+</body>
+</html>
