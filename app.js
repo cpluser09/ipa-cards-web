@@ -485,6 +485,32 @@ function pausePlayback() {
     window.playbackInterval = null;
   }
   updatePlaybackButtons("paused");
+  
+  // 更新暂停按钮文字
+  const pauseBtn = document.getElementById("pauseBtn");
+  pauseBtn.textContent = "播放";
+}
+
+// 切换暂停/播放状态
+function togglePause() {
+  if (window.playbackInterval) {
+    // 已在播放，点击暂停
+    pausePlayback();
+  } else {
+    // 已暂停，点击播放
+    // 检查当前播放模式
+    if (window.playbackMode === "paused") {
+      // 如果是初始状态，默认切换到顺序播放
+      togglePlaybackMode();
+    } else {
+      // 如果已选择播放模式，直接开始播放
+      startPlayback();
+    }
+    
+    // 更新暂停按钮文字
+    const pauseBtn = document.getElementById("pauseBtn");
+    pauseBtn.textContent = "暂停";
+  }
 }
 
 // 页面加载完成后初始化
