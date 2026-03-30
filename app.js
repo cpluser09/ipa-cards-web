@@ -58,13 +58,6 @@ const ipaData = {
 const allCards = [...ipaData.vowels, ...ipaData.consonants];
 
 // 状态变量（全局作用域，以便调试和测试）
-window.currentIndex = 0;
-window.playbackMode = 'paused'; // 'sequential', 'random', 'favorites', 'paused'
-window.playbackInterval = null;
-
-// 收藏状态（本地存储）
-window.favorites = JSON.parse(localStorage.getItem('ipa_favorites')) || [];
-
 // DOM元素
 const phoneticSymbol = document.getElementById('phoneticSymbol');
 const phoneticName = document.getElementById('phoneticName');
@@ -79,6 +72,13 @@ const favBtn = document.getElementById('favBtn');
 const pauseBtn = document.getElementById('pauseBtn');
 const favoriteBtn = document.getElementById('favoriteBtn');
 const indexSection = document.getElementById('indexSection');
+
+window.currentIndex = 0;
+window.playbackMode = 'paused'; // 'sequential', 'random', 'favorites', 'paused'
+window.playbackInterval = null;
+
+// 收藏状态（本地存储）
+window.favorites = JSON.parse(localStorage.getItem('ipa_favorites')) || [];
 
 // 初始化页面
 function initPage() {
