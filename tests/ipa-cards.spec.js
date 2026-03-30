@@ -54,14 +54,14 @@ test('Playback functionality test', async ({ page }) => {
   const initialMode = await page.evaluate(() => window.playbackMode);
   expect(initialMode).toEqual('paused');
   
-  // 测试顺序播放
+  // 测试随机播放（第一次点击会切换到随机播放）
   const playModeBtn = page.locator('#playModeBtn');
   await playModeBtn.click();
   await page.waitForTimeout(4000); // 等待播放切换
   
   // 检查播放模式和卡片是否变化
-  const sequentialMode = await page.evaluate(() => window.playbackMode);
-  expect(sequentialMode).toEqual('sequential');
+  const firstClickMode = await page.evaluate(() => window.playbackMode);
+  expect(firstClickMode).toEqual('random');
   
   // 检查卡片是否发生变化
   const initialSymbol = await phoneticSymbol.textContent();
@@ -75,7 +75,7 @@ test('Playback functionality test', async ({ page }) => {
   
   // 测试暂停后的播放模式
   const pausedMode = await page.evaluate(() => window.playbackMode);
-  expect(pausedMode).toEqual('sequential'); // 保持原模式
+  expect(pausedMode).toEqual('random'); // 保持原模式
   
   // 测试暂停后按上一张/下一张是否按照顺序模式切换
   const prevBtn = page.locator('#prevBtn');
@@ -90,13 +90,13 @@ test('Playback functionality test', async ({ page }) => {
   const nextSymbol = await phoneticSymbol.textContent();
   expect(nextSymbol).not.toEqual(prevSymbol); // 应该返回下一张卡片
   
-  // 测试随机播放
-  await playModeBtn.click(); // 切换到随机模式
+  // 测试顺序播放
+  await playModeBtn.click(); // 切换到顺序模式
   await page.waitForTimeout(4000);
   
   // 检查播放模式
-  const randomMode = await page.evaluate(() => window.playbackMode);
-  expect(randomMode).toEqual('random');
+  const sequentialMode = await page.evaluate(() => window.playbackMode);
+  expect(sequentialMode).toEqual('sequential');
   
   // 检查卡片是否发生变化
   const currentSymbol = await phoneticSymbol.textContent();

@@ -353,8 +353,11 @@ function togglePlaybackMode() {
   // 切换播放模式
   if (window.playbackMode === "sequential") {
     window.playbackMode = "random";
-  } else {
+  } else if (window.playbackMode === "random") {
     window.playbackMode = "sequential";
+  } else {
+    // 初始状态或暂停状态，默认切换到随机播放
+    window.playbackMode = "random";
   }
 
   // 更新按钮的激活状态
