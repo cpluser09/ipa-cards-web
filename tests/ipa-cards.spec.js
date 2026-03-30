@@ -18,11 +18,9 @@ test('Basic functionality test', async ({ page }) => {
   await expect(nextBtn).toBeVisible();
   
   // 检查播放按钮
-  const seqBtn = page.locator('#seqBtn');
-  const randBtn = page.locator('#randBtn');
+  const playModeBtn = page.locator('#playModeBtn');
   const pauseBtn = page.locator('#pauseBtn');
-  await expect(seqBtn).toBeVisible();
-  await expect(randBtn).toBeVisible();
+  await expect(playModeBtn).toBeVisible();
   await expect(pauseBtn).toBeVisible();
   
   // 检查索引按钮
@@ -30,7 +28,7 @@ test('Basic functionality test', async ({ page }) => {
   await expect(indexButtons).toHaveCount(48); // 20个元音 + 28个辅音 = 48个卡片
   
   // 测试下一张卡片功能（使用顺序播放模式）
-  await seqBtn.click();
+  await playModeBtn.click();
   await page.waitForTimeout(1000); // 等待播放模式切换
   const initialSymbol = await phoneticSymbol.textContent();
   await nextBtn.click();
@@ -57,8 +55,8 @@ test('Playback functionality test', async ({ page }) => {
   expect(initialMode).toEqual('paused');
   
   // 测试顺序播放
-  const seqBtn = page.locator('#seqBtn');
-  await seqBtn.click();
+  const playModeBtn = page.locator('#playModeBtn');
+  await playModeBtn.click();
   await page.waitForTimeout(4000); // 等待播放切换
   
   // 检查播放模式和卡片是否变化
@@ -93,8 +91,7 @@ test('Playback functionality test', async ({ page }) => {
   expect(nextSymbol).not.toEqual(prevSymbol); // 应该返回下一张卡片
   
   // 测试随机播放
-  const randBtn = page.locator('#randBtn');
-  await randBtn.click();
+  await playModeBtn.click(); // 切换到随机模式
   await page.waitForTimeout(4000);
   
   // 检查播放模式

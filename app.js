@@ -345,6 +345,28 @@ function goToIndex(index) {
 }
 
 // 设置播放模式
+// 切换播放模式
+function togglePlaybackMode() {
+  // 停止之前的播放
+  pausePlayback();
+
+  // 切换播放模式
+  if (window.playbackMode === "sequential") {
+    window.playbackMode = "random";
+  } else {
+    window.playbackMode = "sequential";
+  }
+
+  // 更新按钮的激活状态
+  updatePlaybackButtons(window.playbackMode);
+
+  // 更新按钮文字
+  const playModeBtn = document.getElementById("playModeBtn");
+  playModeBtn.textContent = window.playbackMode === "sequential" ? "顺序" : "随机";
+
+  // 开始播放
+  startPlayback();
+}
 function setPlaybackMode(mode) {
   console.log('setPlaybackMode called');
   
@@ -372,15 +394,12 @@ function setPlaybackMode(mode) {
 
 // 更新播放按钮的激活状态
 function updatePlaybackButtons(activeMode) {
-  seqBtn.classList.remove('active');
-  randBtn.classList.remove('active');
+  const playModeBtn = document.getElementById('playModeBtn');
   favBtn.classList.remove('active');
   pauseBtn.classList.remove('active');
 
-  if (activeMode === 'sequential') {
-    seqBtn.classList.add('active');
-  } else if (activeMode === 'random') {
-    randBtn.classList.add('active');
+  if (activeMode === 'sequential' || activeMode === 'random') {
+    playModeBtn.classList.add('active');
   } else if (activeMode === 'favorites') {
     favBtn.classList.add('active');
   } else if (activeMode === 'paused') {
@@ -400,7 +419,7 @@ function startPlayback() {
       // 顺序播放
       let nextIndex;
       
-      if (window.favorites.length > 0) {
+      if (window.favorites.length > 0 && isPlaybackModeFavorites()) {
         // 收藏播放模式下的顺序播放
         const currentFavIndex = window.favorites.indexOf(window.currentIndex);
         
@@ -424,7 +443,7 @@ function startPlayback() {
       // 随机播放
       let randomIndex;
       
-      if (window.favorites.length > 0) {
+      if (window.favorites.length > 0 && isPlaybackModeFavorites()) {
         // 收藏播放模式下的随机播放
         do {
           randomIndex = window.favorites[Math.floor(Math.random() * window.favorites.length)];
@@ -451,6 +470,11 @@ function startPlayback() {
       }
     }
   }, interval);
+}
+
+// 检查是否是收藏播放模式
+function isPlaybackModeFavorites() {
+  return window.playbackMode === "favorites";
 }
 
 // 暂停播放（只暂停自动播放，不改变播放模式）
