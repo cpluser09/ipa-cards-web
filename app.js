@@ -470,8 +470,7 @@ function pausePlayback() {
     clearInterval(window.playbackInterval);
     window.playbackInterval = null;
   }
-  updatePlaybackButtons("paused");
-  
+
   // 更新暂停按钮文字
   const pauseBtn = document.getElementById("pauseBtn");
   pauseBtn.textContent = "播放";
