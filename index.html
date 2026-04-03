@@ -197,6 +197,18 @@
             box-shadow: none;
         }
 
+        .hide-btn {
+            font-size: 18px;
+        }
+
+        .hide-btn.active {
+            background-color: #357abd;
+        }
+
+        .info-section.hidden {
+            display: none;
+        }
+
         .playback-controls {
             display: flex;
             gap: 10px;
@@ -429,6 +441,7 @@
                 <button class="control-btn" id="prevBtn" onclick="prevCard();">&#8249;</button>
                 <button class="playback-btn" id="pauseBtn" onclick="togglePause()">播放</button>
                 <button class="control-btn" id="nextBtn" onclick="nextCard();">&#8250;</button>
+                <button class="control-btn hide-btn" id="hideBtn" aria-label="隐藏音标信息" title="隐藏音标信息">&#128065;</button>
             </div>
         </div>
         <div class="index-label-row">

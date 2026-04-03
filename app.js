@@ -3,8 +3,8 @@ const ipaData = {
   vowels: [
     { symbol: '/i:/', name: '长衣音', pinyin: '衣（拉长）', pronunciation: '舌尖靠近下齿，舌前部抬起，嘴唇向两旁张开成扁平形', examples: 'sheep, green, please', examplesHighlight: ['ee', 'ee', 'ea'] },
     { symbol: '/ɪ/', name: '短衣音', pinyin: '衣（短促）', pronunciation: '舌尖靠近下齿，舌前部抬起，但比 /i:/ 低，嘴唇向两旁张开成扁平形，但比 /i:/ 略窄', examples: 'bit, ship, city', examplesHighlight: ['i', 'i', 'i'] },
-    { symbol: '/e/', name: '半开口前元音', pinyin: '爱（短促）', pronunciation: '舌尖靠近下齿，舌前部抬起，比 /ɪ/ 低，嘴唇向两旁张开，宽度中等', examples: 'bed, ten, head', examplesHighlight: ['e', 'e', 'ea'] },
-    { symbol: '/æ/', name: '大口开口前元音', pinyin: '爱（大口）', pronunciation: '舌尖靠近下齿，舌前部降到最低，嘴唇向两旁张开，呈扁平形，开口最大', examples: 'cat, hat, bad', examplesHighlight: ['a', 'a', 'a'] },
+    { symbol: '/e/', name: '半开口前元音', pinyin: '', pronunciation: '舌尖靠近下齿，舌前部抬起，比 /ɪ/ 低，嘴唇向两旁张开，宽度中等', examples: 'bed, ten, head', examplesHighlight: ['e', 'e', 'ea'] },
+    { symbol: '/æ/', name: '大口开口前元音', pinyin: '', pronunciation: '舌尖靠近下齿，舌前部降到最低，嘴唇向两旁张开，呈扁平形，开口最大', examples: 'cat, hat, bad', examplesHighlight: ['a', 'a', 'a'] },
     { symbol: '/ɜ:/', name: '长厄音', pinyin: '厄（拉长）', pronunciation: '舌身平放，舌中部略抬起，双唇扁平，肌肉放松，口腔半开', examples: 'bird, girl, third', examplesHighlight: ['ir', 'ir', 'ir'] },
     { symbol: '/ə/', name: '中元音', pinyin: '厄（短促）', pronunciation: '舌身平放，舌中部略抬起，双唇扁平，肌肉放松，口腔半开，但比 /ɜ:/ 开口略大', examples: 'about, father, mother', examplesHighlight: ['a', 'er', 'er'] },
     { symbol: '/ɑ:/', name: '长啊音', pinyin: '啊（拉长）', pronunciation: '口张大，舌身平放，舌中部略低，双唇自然张开，不圆唇', examples: 'car, far, arm', examplesHighlight: ['ar', 'ar', 'ar'] },
@@ -19,7 +19,7 @@ const ipaData = {
     { symbol: '/əʊ/', name: '合口双元音', pinyin: '欧（由ə到u）', pronunciation: '从 /ə/ 向 /ʊ/ 滑动，口张开，双唇收圆', examples: 'no, go, home', examplesHighlight: ['o', 'o', 'o_e'] },
     { symbol: '/aʊ/', name: '合口双元音', pinyin: '奥（由a到u）', pronunciation: '从 /ɑ:/ 向 /ʊ/ 滑动，口张开，然后收圆', examples: 'now, house, out', examplesHighlight: ['ow', 'ou', 'ou'] },
     { symbol: '/ɪə/', name: '集中双元音', pinyin: '衣厄（由i到ə）', pronunciation: '从 /ɪ/ 向 /ə/ 滑动，口张开，双唇扁平', examples: 'ear, near, here', examplesHighlight: ['ear', 'ear', 'ere'] },
-    { symbol: '/eə/', name: '集中双元音', pinyin: '爱厄（由e到ə）', pronunciation: '从 /e/ 向 /ə/ 滑动，口张开，双唇扁平', examples: 'air, pair, there', examplesHighlight: ['air', 'air', 'ere'] },
+    { symbol: '/eə/', name: '集中双元音', pinyin: '（由e到ə）', pronunciation: '从 /e/ 向 /ə/ 滑动，口张开，双唇扁平', examples: 'air, pair, there', examplesHighlight: ['air', 'air', 'ere'] },
     { symbol: '/ʊə/', name: '集中双元音', pinyin: '乌厄（由u到ə）', pronunciation: '从 /ʊ/ 向 /ə/ 滑动，口张开，双唇收圆', examples: 'poor, tour, sure', examplesHighlight: ['oo', 'ou', 'ure'] }
   ],
   consonants: [
@@ -71,6 +71,8 @@ const randBtn = document.getElementById('randBtn');
 const favBtn = document.getElementById('favBtn');
 const pauseBtn = document.getElementById('pauseBtn');
 const favoriteBtn = document.getElementById('favoriteBtn');
+const hideBtn = document.getElementById('hideBtn');
+const infoSection = document.querySelector('.info-section');
 const indexSectionVowels = document.getElementById('indexSectionVowels');
 const indexSectionConsonants = document.getElementById('indexSectionConsonants');
 
@@ -267,8 +269,26 @@ function toggleFavorite() {
   updateFavoriteButton();
   updateFavoriteButtons();
 }
+
+// 切换隐藏/显示音标名称和中文谐音
+function toggleInfo() {
+  const infoSection = document.querySelector('.info-section');
+  if (infoSection) {
+    const isHidden = infoSection.classList.toggle('hidden');
+    if (hideBtn) {
+      hideBtn.classList.toggle('active', isHidden);
+      hideBtn.setAttribute('aria-label', isHidden ? '显示音标信息' : '隐藏音标信息');
+      hideBtn.setAttribute('title', isHidden ? '显示音标信息' : '隐藏音标信息');
+    }
+  }
+}
+
 // 绑定事件
 function bindEvents() {
+  if (hideBtn) {
+    hideBtn.addEventListener('click', toggleInfo);
+  }
+
   // 键盘事件
   document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft') {
